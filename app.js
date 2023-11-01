@@ -10,6 +10,7 @@ const usersRouter = require("./routes/users");
 const catalogRouter = require("./routes/catalog");
 
 const app = express();
+app.disable('x-powered-by');
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
