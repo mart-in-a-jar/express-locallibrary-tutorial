@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+require("dotenv").config();
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -11,11 +12,11 @@ const app = express();
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-const mongoDB = "mongodb://localhost:27017/localLibraryDb";
+const mongoDB = process.env.MONGO_URL;
 
 main().catch((e) => console.log(e.message));
 async function main() {
-    await mongoose.connect(mongoDB);
+    await mongoose.connect(mongoDB, { dbName: "localLibraryDb" });
 }
 
 // view engine setup
