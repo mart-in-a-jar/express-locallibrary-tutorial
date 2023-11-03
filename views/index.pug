@@ -2,4 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #[em LocalLibrary], a very basic Express website developed as a tutorial example on the Mozilla Developer Network.
+
+  h1 Dynamic content
+
+  p The library has the following record counts:
+
+  ul
+    li #[strong Books:] !{amount.books}
+    li #[strong Copies:] !{amount.bookInstances.all}
+    li #[strong Copies available:] !{amount.bookInstances.available}
+    li #[strong Authors:] !{amount.authors}
+    li #[strong Genres:] !{amount.genres}

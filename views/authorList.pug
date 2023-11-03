@@ -1,0 +1,14 @@
+extends layout 
+
+block content
+
+    h1= title 
+
+    ul 
+        each author in authorList 
+            li 
+                a(href=author.url) #{author.name}
+                |   (#{author.year_of_birth} - #{author.year_of_death})
+
+        else
+            li There are no authors.
