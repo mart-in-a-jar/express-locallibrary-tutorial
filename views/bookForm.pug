@@ -1,0 +1,49 @@
+extends layout
+
+block content
+    h1= title
+
+    form(method="POST")
+        div.form-group
+            label(for="title") Title: 
+            input#title.form-control(type="text" placeholder="Name of book" name="title" 
+            required value= (book ? book.title : ""))
+        div.form-group
+            label(for="author") Author: 
+            select#author.form-control(name="author" required)
+                //- Sort authors (if not done by database query)
+                - if(authors) {authors.sort((a,b) => {return a.family_name.toLowerCase() < b.family_name.toLowerCase() ? -1 : 1})}
+
+                //- Placeholder
+                if !book
+                    option(disabled selected value="") Select author   
+                for author in authors 
+                    //- Select author if book is passed (on error)
+                    if book
+                        - const isSelected = book.author.toString() === author._id.toString()
+                        option(value= author._id selected= isSelected) #{author.name}
+                    else 
+                        option(value= author._id) #{author.name}
+        div.form-group
+            label(for="summary") Summary:
+            textarea#summary.form-control(placeholder= "Summary" name= "summary" 
+            required) #{book ? book.summary : ""}
+        div.form-group
+            label(for="isbn") ISBN: 
+            input#isbn.form-control(type="text" placeholder="ISBN" name="isbn" required 
+            value= (book ? book.isbn : ""))
+        div.form-group
+            label Genre: 
+            div 
+                for genre in genres 
+                    div(style= "display: inline; padding-right: 10px;")
+                        input.checkbox-input(type="checkbox" name="genre" id= genre._id 
+                        value= genre._id checked= genre.checked)
+                        label(for= genre._id) #{genre.name}
+
+        button.btn.btn-primary(type="submit") Submit
+
+        if errors 
+            ul 
+                for error in errors 
+                    li!= error.msg

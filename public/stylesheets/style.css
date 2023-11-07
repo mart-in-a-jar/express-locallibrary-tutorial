@@ -7,3 +7,7 @@
 [class|= "text"] {
   text-transform: capitalize;
 }
+
+input[type="checkbox"][name="genre"] {
+  margin-right: 3px;
+}
