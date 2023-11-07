@@ -1,7 +1,9 @@
 const Author = require("../models/Author");
 const Book = require("../models/Book");
-const asyncHandler = require("express-async-handler");
 const propagateError = require("../utils/errors");
+
+const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
@@ -35,14 +37,67 @@ exports.author_detail = asyncHandler(async (req, res, next) => {
 });
 
 // Display Author create form on GET.
-exports.author_create_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Author create GET");
-});
+exports.author_create_get = (req, res, next) => {
+    res.render("authorForm", { title: "Create Author" });
+};
 
 // Handle Author create on POST.
-exports.author_create_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Author create POST");
-});
+exports.author_create_post = [
+    // Validate and sanitize fields.
+    body("first_name")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage("First name must be specified.")
+        // Don't do this - names can be non-alphanumeric
+        .isAlphanumeric()
+        .withMessage("First name has non-alphanumeric characters."),
+    body("family_name")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage("Family name must be specified.")
+        // Don't do this - names can be non-alphanumeric
+        .isAlphanumeric()
+        .withMessage("Family name has non-alphanumeric characters."),
+    body("date_of_birth", "Invalid date of birth")
+        .optional({ values: "falsy" })
+        .isISO8601()
+        .toDate(),
+    body("date_of_death", "Invalid date of death")
+        .optional({ values: "falsy" })
+        .isISO8601()
+        .toDate(),
+    // Process request after validation and sanitization.
+    asyncHandler(async (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create Author object with escaped and trimmed data
+        const { first_name, family_name, date_of_birth, date_of_death } =
+            req.body;
+        const author = new Author({
+            first_name,
+            family_name,
+            date_of_birth,
+            date_of_death,
+        });
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/errors messages.
+            res.render("authorForm", {
+                title: "Create Author",
+                author,
+                errors: errors.array(),
+            });
+        } else {
+            // Data from form is valid
+
+            // Save author
+            await author.save();
+            res.redirect(author.url);
+        }
+    }),
+];
 
 // Display Author delete form on GET.
 exports.author_delete_get = asyncHandler(async (req, res, next) => {
