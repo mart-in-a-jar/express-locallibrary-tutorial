@@ -24,11 +24,17 @@ BookInstanceSchema.virtual("url").get(function () {
 
 // Add one day and format
 BookInstanceSchema.virtual("due_back_formatted").get(function () {
-    return DateTime.fromJSDate(this.due_back)
-        .plus({ days: 1 })
-        // .setLocale("nb")
-        // .toLocaleString({ day: "2-digit", month: "2-digit", year: "numeric" });
-        .toLocaleString(DateTime.DATE_MED)
+    return (
+        DateTime.fromJSDate(this.due_back)
+            .plus({ days: 1 })
+            // .setLocale("nb")
+            // .toLocaleString({ day: "2-digit", month: "2-digit", year: "numeric" });
+            .toLocaleString(DateTime.DATE_MED)
+    );
+});
+
+BookInstanceSchema.virtual("due_back_for_html").get(function () {
+    return DateTime.fromJSDate(this.due_back).toISODate();
 });
 
 module.exports = mongoose.model("bookInstances", BookInstanceSchema);

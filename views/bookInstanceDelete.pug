@@ -1,0 +1,10 @@
+extends layout 
+
+block content 
+
+    h1 #{title}: #{bookInstance._id}
+
+    p Are you sure you wish to delete this book copy?
+
+    form(method="POST")
+        button.btn.btn-primary(type="submit") Delete
