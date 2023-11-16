@@ -138,10 +138,62 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Author update form on GET.
 exports.author_update_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Author update GET");
+    const author = await Author.findById(req.params.id);
+
+    if (!author) {
+        propagateError.error(404, "Author not found", next);
+    }
+
+    res.render("authorForm", { title: "Update Author", author });
 });
 
 // Handle Author update on POST.
-exports.author_update_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Author update POST");
-});
+exports.author_update_post = [
+    body("first_name")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage("First name must be specified.")
+        // Don't do this - names can be non-alphanumeric
+        .isAlphanumeric()
+        .withMessage("First name has non-alphanumeric characters."),
+    body("family_name")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage("Family name must be specified.")
+        // Don't do this - names can be non-alphanumeric
+        .isAlphanumeric()
+        .withMessage("Family name has non-alphanumeric characters."),
+    body("date_of_birth", "Invalid date of birth")
+        .optional({ values: "falsy" })
+        .isISO8601()
+        .toDate(),
+    body("date_of_death", "Invalid date of death")
+        .optional({ values: "falsy" })
+        .isISO8601()
+        .toDate(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+        
+        const author = new Author({
+            first_name: req.body.first_name,
+            family_name: req.body.family_name,
+            date_of_birth: req.body.date_of_birth,
+            date_of_death: req.body.date_of_death,
+            _id: req.params.id,
+        });
+
+        if (!errors.isEmpty()) {
+            return res.render("authorForm", {
+                title: "Update Author",
+                author,
+                errors: errors.array(),
+            });
+        }
+
+        await Author.updateOne({ _id: req.params.id }, author);
+
+        res.redirect(author.url);
+    }),
+];
