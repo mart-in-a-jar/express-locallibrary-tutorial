@@ -6,6 +6,7 @@ const debugDb = require("debug")("express-locallibrary-tutorial:db");
 const logger = require("morgan");
 const compression = require("compression");
 const helmet = require("helmet");
+const RateLimit = require("express-rate-limit");
 require("dotenv").config();
 
 const indexRouter = require("./routes/index");
@@ -13,6 +14,15 @@ const usersRouter = require("./routes/users");
 const catalogRouter = require("./routes/catalog");
 
 const app = express();
+
+// Set up rate limiter: maximum of forty requests per minute
+const limiter = RateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 40,
+});
+
+// Apply rate limiter to all requests
+app.use(limiter);
 
 app.use(
     helmet({
