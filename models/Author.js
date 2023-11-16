@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const { DateTime } = require("luxon");
 
+// referenced by:
+// Book
+
 const AuthorSchema = new mongoose.Schema({
     first_name: { type: String, required: true, maxLength: 100 },
     family_name: { type: String, required: true, maxLength: 100 },

@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+// referenced by:
+// BookInstance
+
 const BookSchema = new mongoose.Schema({
     title: { type: String, required: true },
     author: {

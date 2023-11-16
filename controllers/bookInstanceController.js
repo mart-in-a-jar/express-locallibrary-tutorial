@@ -118,7 +118,15 @@ exports.bookinstance_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle BookInstance delete on POST.
 exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
-    await BookInstance.findByIdAndDelete(req.params.id).exec();
+    const bookInstance = await BookInstance.findByIdAndDelete(req.params.id)
+        .exec()
+        .catch(() => {
+            return res.sendStatus(404);
+        });
+
+    if (!bookInstance) {
+        return res.sendStatus(404);
+    }
 
     res.redirect("/catalog/bookinstances");
 });
