@@ -16,17 +16,17 @@ block content
             h4 Book Instances 
 
             dl 
-            for instance in bookInstances
-                dt 
-                    a(href=instance.url) #{instance.id}
-                dd #{instance.imprint}
-                dd 
-                    if instance.status === "available"
-                        p.text-success #{instance.status}
-                    else if instance.status === "maintenance"
-                        p.text-danger #{instance.status}
-                    else
-                        p.text-warning #{instance.status}
+                for instance in bookInstances
+                    dt 
+                        a(href=instance.url) #{instance.id}
+                    dd #{instance.imprint}
+                    dd 
+                        if instance.status === "available"
+                            p.text-success #{instance.status}
+                        else if instance.status === "maintenance"
+                            p.text-danger #{instance.status}
+                        else
+                            p.text-warning #{instance.status}
 
     else 
         p Do you really want to delete this book?
