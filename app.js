@@ -2,6 +2,7 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const debugDb = require("debug")("express-locallibrary-tutorial:db");
 const logger = require("morgan");
 require("dotenv").config();
 
@@ -10,13 +11,13 @@ const usersRouter = require("./routes/users");
 const catalogRouter = require("./routes/catalog");
 
 const app = express();
-app.disable('x-powered-by');
+app.disable("x-powered-by");
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const mongoDB = process.env.MONGO_URL;
 
-main().catch((e) => console.log(e.message));
+main().catch((e) => debugDb(e.message));
 async function main() {
     await mongoose.connect(mongoDB, { dbName: "localLibraryDb" });
 }
