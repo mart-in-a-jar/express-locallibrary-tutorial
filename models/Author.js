@@ -31,10 +31,18 @@ AuthorSchema.virtual("year_of_birth").get(function () {
     }
 });
 
+AuthorSchema.virtual("date_of_birth_for_html").get(function () {
+    return DateTime.fromJSDate(this.date_of_birth).toISODate(); // YYYY-MM-DD
+});
+
 AuthorSchema.virtual("year_of_death").get(function () {
     if (this.date_of_death) {
         return this.date_of_death.getFullYear();
     }
+});
+
+AuthorSchema.virtual("date_of_death_for_html").get(function () {
+    return DateTime.fromJSDate(this.date_of_death).toISODate(); // YYYY-MM-DD
 });
 
 AuthorSchema.virtual("lifespan").get(function () {

@@ -5,6 +5,7 @@ const Book = require("../models/Book");
 const propagateError = require("../utils/errors");
 
 const { body, validationResult } = require("express-validator");
+const Author = require("../models/Author");
 
 // Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
@@ -133,10 +134,60 @@ exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display BookInstance update form on GET.
 exports.bookinstance_update_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: BookInstance update GET");
+    const [bookInstance, books] = await Promise.all([
+        BookInstance.findById(req.params.id).exec(),
+        Book.find({}, { title: 1 }).exec(),
+    ]);
+
+    if (!bookInstance) {
+        propagateError.error(404, "Book copy not found", next);
+    }
+
+    res.render("bookInstanceForm", {
+        title: "Update Book Copy",
+        bookInstance,
+        books,
+    });
 });
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: BookInstance update POST");
-});
+exports.bookinstance_update_post = [
+    body("book", "Book must be specified").trim().isLength({ min: 1 }).escape(),
+    body("imprint", "Imprint must be specified")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("status").escape(),
+    body("due_back", "Invalid date")
+        .optional({ values: "falsy" })
+        .isISO8601()
+        .toDate(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        const bookInstance = new BookInstance({
+            book: req.body.book,
+            imprint: req.body.imprint,
+            status: req.body.status,
+            due_back: req.body.due_back,
+            _id: req.params.id,
+        });
+
+        if (!errors.isEmpty()) {
+            const books = await Book.find({}, { title: 1 })
+                .collation({ locale: "en", strength: 2 })
+                .sort({ title: 1 })
+                .exec();
+            return res.render("bookInstanceForm", {
+                title: "Update Book Copy",
+                bookInstance,
+                books,
+                errors: errors.array(),
+            });
+        }
+
+        await BookInstance.updateOne({ _id: req.params.id }, bookInstance);
+
+        res.redirect(bookInstance.url);
+    }),
+];
