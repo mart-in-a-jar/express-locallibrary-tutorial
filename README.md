@@ -1,4 +1,4 @@
-### Project for learning express and mongoose  
+### Project for learning express and mongoose with server rendered html
 (https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website)
 #### Hosted on railway
 
