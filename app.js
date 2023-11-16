@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const debugDb = require("debug")("express-locallibrary-tutorial:db");
 const logger = require("morgan");
 const compression = require("compression");
+const helmet = require("helmet");
 require("dotenv").config();
 
 const indexRouter = require("./routes/index");
@@ -12,7 +13,17 @@ const usersRouter = require("./routes/users");
 const catalogRouter = require("./routes/catalog");
 
 const app = express();
-app.disable("x-powered-by");
+
+app.use(
+    helmet({
+        // Set CSP headers to allow our Bootstrap and Jquery to be served
+        contentSecurityPolicy: {
+            directives: {
+                "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+            },
+        },
+    })
+);
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
