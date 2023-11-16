@@ -12,7 +12,7 @@ const AuthorSchema = new mongoose.Schema({
 });
 
 AuthorSchema.virtual("name").get(function () {
-    // to handle cases where come fields are missing
+    // to handle cases where some fields are missing
     let fullName = "";
     if (this.first_name && this.family_name) {
         fullName = `${this.family_name}, ${this.first_name}`;

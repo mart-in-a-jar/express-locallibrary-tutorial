@@ -3,8 +3,9 @@ extends layout
 block content 
 
     h1 #{title}: #{book.title}
+    p By #{book.author.first_name} #{book.author.family_name}
+        |  - ISBN: #{book.isbn}
     p= book.summary
-    p= book.isbn
 
     if bookInstances.length > 0
 

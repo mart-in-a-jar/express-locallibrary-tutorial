@@ -119,7 +119,7 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
     // Get details of author and all their books (in parallel)
     const [author, books] = await Promise.all([
         Author.findById(req.params.id).exec(),
-        Book.find({ author: req.params.id }).exec(),
+        Book.find({ author: req.params.id }, { title: 1, summary: 1 }).exec(),
     ]);
 
     if (books.length > 0) {
